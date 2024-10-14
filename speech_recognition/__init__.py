@@ -31,9 +31,13 @@ except (ModuleNotFoundError, ImportError):
     pass
 
 from .audio import AudioData, get_flac_converter
-from .exceptions import (RequestError, TranscriptionFailed,
-                         TranscriptionNotReady, UnknownValueError,
-                         WaitTimeoutError)
+from .exceptions import (
+    RequestError,
+    TranscriptionFailed,
+    TranscriptionNotReady,
+    UnknownValueError,
+    WaitTimeoutError,
+)
 
 __author__ = "Anthony Zhang (Uberi)"
 __version__ = "3.10.4"
@@ -761,10 +765,6 @@ class Recognizer(AudioSource):
 
             yield AudioData(buffer, source.SAMPLE_RATE, source.SAMPLE_WIDTH)
         else:
-            # obtain frame data
-            for i in range(pause_count - non_speaking_buffer_count):
-                frames.pop()  # remove extra non-speaking frames at the end
-
             frame_data = b"".join(frames)
             # yield the entire phrase as a single AudioData instance
             yield AudioData(frame_data, source.SAMPLE_RATE, source.SAMPLE_WIDTH)
@@ -1030,10 +1030,12 @@ class Recognizer(AudioSource):
             "encoding": speech.RecognitionConfig.AudioEncoding.FLAC,
             "sample_rate_hertz": audio_data.sample_rate,
             "language_code": language,
-            "model": model
+            "model": model,
         }
         if preferred_phrases is not None:
-            config["speech_contexts"] = [speech.SpeechContext(phrases=preferred_phrases)]
+            config["speech_contexts"] = [
+                speech.SpeechContext(phrases=preferred_phrases)
+            ]
         if show_all:
             config["enableWordTimeOffsets"] = (
                 True  # some useful extra options for when we want all the output
@@ -1143,8 +1145,9 @@ class Recognizer(AudioSource):
         ), getattr(self, "azure_cached_access_token_expiry", None)
         allow_caching = True
         try:
-            from time import \
-                monotonic  # we need monotonic time to avoid being affected by system clock changes, but this is only available in Python 3.3+
+            from time import (
+                monotonic,
+            )  # we need monotonic time to avoid being affected by system clock changes, but this is only available in Python 3.3+
         except ImportError:
             expire_time = (
                 None  # monotonic time not available, don't cache access tokens
@@ -1281,8 +1284,9 @@ class Recognizer(AudioSource):
         ), getattr(self, "bing_cached_access_token_expiry", None)
         allow_caching = True
         try:
-            from time import \
-                monotonic  # we need monotonic time to avoid being affected by system clock changes, but this is only available in Python 3.3+
+            from time import (
+                monotonic,
+            )  # we need monotonic time to avoid being affected by system clock changes, but this is only available in Python 3.3+
         except ImportError:
             expire_time = (
                 None  # monotonic time not available, don't cache access tokens
